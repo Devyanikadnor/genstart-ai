@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# Environment
+.env
+.env.*
+
+# Google Cloud credentials
+*.json
+
+# Data
+backend/data/history.json
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GenStart – About</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family:'Copperplate', 'Copperplate Gothic Light', serif;
+      background:#000;
+      color:#fff;
+      margin:0;
+      padding:0;
+    }
+
+    /* ===== FIXED GLASSMORPHISM HEADER ===== */
+    .global-header{
+      position:sticky;
+      top:0;
+      z-index:1000;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 26px;
+      height:60px;
+      background:rgba(0,0,0,0.40);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(255,255,255,0.12);
+    }
+
+    .logo-area{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .logo-ball{
+      width:20px;
+      height:20px;
+      border-radius:50%;
+      background:radial-gradient(circle, #4cc9f0, #3a0ca3);
+      box-shadow:0 0 12px #4cc9f0;
+    }
+
+    .brand-text{
+      font-size:1.25rem;
+      font-weight:700;
+      letter-spacing:0.5px;
+    }
+
+    nav a{
+      color:#fff;
+      text-decoration:none;
+      opacity:0.9;
+      margin-left:22px;
+      font-size:0.95rem;
+      transition:0.2s;
+    }
+
+    nav a:hover{
+      opacity:1;
+      text-shadow:0 0 6px #4cc9f0;
+    }
+
+    /* ===== FOOTER (GAP FIXED) ===== */
+    .global-footer{
+      width:100%;
+      margin-top:60px;
+      padding:18px 20px 16px;
+      text-align:center;
+      background:rgba(0,0,0,0.45);
+      backdrop-filter:blur(10px);
+      border-top:1px solid rgba(255,255,255,0.15);
+      font-size:0.9rem;
+      line-height:1.35;   /* FIXED: Reduces gap between lines */
+    }
+
+    .global-footer p{
+      margin:3px 0;      /* FIXED: Removes extra vertical spacing */
+      padding:0;
+    }
+
+    /* ===== PAGE BODY ===== */
+    .container{
+      max-width:900px;
+      margin:0 auto;
+      padding:30px 16px;
+    }
+
+    h1{
+      margin-bottom:10px;
+      font-size:1.8rem;
+    }
+
+    h2{
+      font-size:1.3rem;
+    }
+
+    p{
+      line-height:1.6;
+      font-size:1rem;
+    }
+
+    ul{
+      margin-left:18px;
+      margin-top:6px;
+      line-height:1.5;
+      font-size:1rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="global-header">
+    <div class="logo-area">
+      <div class="logo-ball"></div>
+      <span class="brand-text">GenStart</span>
+    </div>
+
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="history.html">History</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="container">
+    <h1>About GenStart</h1>
+    <p>
+      GenStart is an AI-powered multi-agent platform that acts as your complete startup team –
+      CEO, Product Manager, Developer, and Marketing Strategist – all in one place.
+      You type an idea, GenStart generates a full startup plan.
+    </p>
+
+    <h2 style="margin-top:20px;">What GenStart Does</h2>
+    <ul>
+      <li>Refines your idea into a clear problem and solution.</li>
+      <li>Designs product features, user personas, and MVP scope.</li>
+      <li>Suggests tech stack, architecture, and sample APIs.</li>
+      <li>Creates brand name, tagline, and launch strategy.</li>
+      <li>Summarizes everything into a 3-slide pitch.</li>
+    </ul>
+
+    <h2 style="margin-top:20px;">Built For</h2>
+    <ul>
+      <li>Gen AI-thon (Hackathon by ML Nashik).</li>
+      <li>Students who want to turn ideas into startups quickly.</li>
+      <li>Founders who need a “virtual co-founder” to plan their product.</li>
+    </ul>
+
+    <h2 style="margin-top:20px;">Team</h2>
+    <p>
+      Team Name: <strong>GenStart AI</strong><br/>
+      Tagline: <em>“Think it. Type it. Build it.”</em>
+    </p>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="global-footer">
+    <p>© 2025 GenStart — AI Multi-Agent Startup Builder</p>
+    <p>Created for Gen AI-thon • ML Nashik</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GenStart – AI Multi-Agent Startup Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box;}
+    body {
+      font-family:'Copperplate', 'Copperplate Gothic Light', serif;
+      background:#000;
+      color:#fff;
+      overflow-x:hidden;
+      transition:background 0.4s ease, color 0.4s ease;
+    }
+
+    .app-shell{
+      width:100%;
+      max-width:1400px;
+      margin:0 auto;
+      padding:40px 20px;
+    }
+
+    /* Header */
+    .app-header{text-align:center; margin-bottom:40px;}
+    .logo{display:flex; justify-content:center; align-items:center; gap:10px;}
+    .logo-orb{
+      width:40px; height:40px;
+      background:radial-gradient(circle,#4cc9f0,#3a0ca3);
+      border-radius:50%;
+      box-shadow:0 0 25px #4cc9f0;
+      animation:pulse 2s infinite alternate;
+    }
+    @keyframes pulse{from{transform:scale(1);} to{transform:scale(1.15);} }
+    .logo-text{font-size:1.7rem; font-weight:700; letter-spacing:2px;}
+
+    .subtitle{
+      opacity:0.9;
+      margin-top:14px;
+      font-size:1.25rem;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+      animation:taglineGlow 3.5s ease-out infinite alternate;
+    }
+    @keyframes taglineGlow{
+      0%{opacity:0; transform:translateY(8px); text-shadow:0 0 0 rgba(76,201,240,0);}
+      40%{opacity:0.9; transform:translateY(0); text-shadow:0 0 10px rgba(76,201,240,0.7);}
+      100%{opacity:1; transform:translateY(0); text-shadow:0 0 18px rgba(76,201,240,0.9);}
+    }
+
+    /* Grid Layout */
+    .content-grid{display:grid; grid-template-columns:1fr 1fr; gap:25px;}
+    @media(max-width:900px){.content-grid{grid-template-columns:1fr;}}
+
+    .glass{
+      background:rgba(255,255,255,0.05);
+      border-radius:20px;
+      padding:25px;
+      border:1px solid rgba(255,255,255,0.12);
+      box-shadow:0 0 30px rgba(0,0,0,0.6);
+      animation:cardPop 0.6s ease both;
+    }
+    @keyframes cardPop{0%{opacity:0; transform:translateY(25px);}100%{opacity:1; transform:translateY(0);}}
+
+    h2{font-size:1.05rem; margin-bottom:12px;}
+    .hint{opacity:0.7; font-size:0.9rem; margin-bottom:12px;}
+
+    textarea{
+      width:100%; border:none;
+      background:rgba(255,255,255,0.08);
+      color:#fff; padding:12px;
+      border-radius:12px; resize:none;
+      font-size:0.95rem;
+      outline:none;
+    }
+
+    .controls{display:flex; gap:10px; margin-top:15px;}
+    select, button{
+      flex:1;
+      padding:10px 14px;
+      border:none; border-radius:12px;
+      background:#3a0ca3;
+      cursor:pointer; color:#fff;
+      font-weight:600;
+      transition:0.3s;
+      position:relative; overflow:hidden;
+    }
+    button:hover{background:#4cc9f0; color:#000;}
+    button::after{
+      content:"";
+      position:absolute; width:0; height:100%; inset:0;
+      background:rgba(255,255,255,0.35);
+      transition:0.4s; border-radius:inherit;
+    }
+    button:hover::after{width:100%;}
+
+    .status-text{margin-top:8px; font-size:0.8rem; opacity:0.8;}
+
+    .agent-timeline{margin-top:20px;}
+    .agent{
+      display:flex; align-items:center; gap:8px;
+      margin:6px 0; opacity:0.7;
+      transition:0.3s;
+    }
+    .agent.active{opacity:1; transform:translateX(6px);}
+    .dot{width:10px;height:10px;border-radius:50%;background:#4cc9f0;}
+
+    .tabs{display:flex; gap:10px; margin-bottom:15px;}
+    .tab{
+      padding:8px 15px;
+      background:#111; border-radius:10px;
+      cursor:pointer; opacity:0.7;
+      transition:0.3s;
+    }
+    .tab.active{opacity:1; background:#4cc9f0; color:#000;}
+
+    .tab-panels{
+      background:rgba(255,255,255,0.05);
+      border-radius:12px;
+      padding:15px;
+      min-height:280px;
+    }
+    .tab-panel{
+      display:none;
+      line-height:1.5;
+      font-size:0.9rem;
+    }
+    .tab-panel.active{display:block;}
+
+    .section-title{
+      font-weight:700;
+      margin-top:4px;
+      margin-bottom:2px;
+    }
+    .bullet-list{
+      margin-left:16px;
+      margin-bottom:6px;
+      list-style:disc;
+    }
+
+    .theme-toggle{
+      position:fixed; top:20px; right:20px;
+      background:#222; color:#fff;
+      padding:10px 15px; border-radius:12px;
+      cursor:pointer; font-weight:600;
+      border:1px solid #444;
+      font-size:0.85rem;
+    }
+
+    /* Top nav */
+    .global-header{
+      width:100%; padding:18px 30px;
+      background:rgba(0,0,0,0.45);
+      backdrop-filter:blur(10px);
+      position:fixed; top:0; left:0; z-index:1000;
+      display:flex; justify-content:space-between; align-items:center;
+      border-bottom:1px solid rgba(255,255,255,0.15);
+    }
+    .global-header a{
+      color:#fff; text-decoration:none; opacity:0.85;
+      font-size:0.95rem;
+    }
+    .global-header nav{display:flex; gap:18px;}
+
+    .header-spacer{height:80px;}
+
+    .global-footer{
+      width:100%; margin-top:60px; padding:25px;
+      text-align:center; background:rgba(0,0,0,0.45);
+      backdrop-filter:blur(10px); border-top:1px solid rgba(255,255,255,0.15);
+      font-size:0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Global Header -->
+  <header class="global-header" id="globalHeader">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="width:28px; height:28px; background:radial-gradient(circle,#4cc9f0,#3a0ca3); border-radius:50%; box-shadow:0 0 20px #4cc9f0;"></div>
+      <span style="font-size:1.4rem; font-weight:700;">GenStart</span>
+    </div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="history.html">History</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <div class="header-spacer"></div>
+  <div class="theme-toggle" id="themeToggle">Theme</div>
+
+  <main class="app-shell">
+    <header class="app-header">
+      <div class="logo">
+        <div class="logo-orb"></div>
+        <span class="logo-text">GenStart</span>
+      </div>
+      <p class="subtitle">Your AI-powered startup team – CEO, PM, Dev & Marketing agent in one place.</p>
+    </header>
+
+    <section class="content-grid">
+      <!-- LEFT -->
+      <section class="panel input-panel glass">
+        <h2>Describe your idea</h2>
+        <p class="hint">Example: “An app that helps students reduce exam stress with AI-based study plans.”</p>
+        <textarea id="ideaInput" rows="6" placeholder="Type your startup idea here..."></textarea>
+
+        <div class="controls">
+          <select id="modeSelect">
+            <option value="default">Standard Mode</option>
+            <option value="student">Student Startup</option>
+            <option value="local">Local Business</option>
+          </select>
+          <button id="generateBtn">Generate Startup Plan</button>
+        </div>
+
+        <p id="status" class="status-text"></p>
+
+        <div class="agent-timeline">
+          <div class="agent" data-agent="CEO"><span class="dot"></span><span>CEO Agent</span></div>
+          <div class="agent" data-agent="Product"><span class="dot"></span><span>Product Agent</span></div>
+          <div class="agent" data-agent="Dev"><span class="dot"></span><span>Dev Agent</span></div>
+          <div class="agent" data-agent="Marketing"><span class="dot"></span><span>Marketing Agent</span></div>
+          <div class="agent" data-agent="Pitch"><span class="dot"></span><span>Pitch Synthesizer</span></div>
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <section class="panel output-panel glass">
+        <div class="tabs">
+          <button class="tab active" data-tab="overview">Overview</button>
+          <button class="tab" data-tab="product">Product</button>
+          <button class="tab" data-tab="tech">Tech</button>
+          <button class="tab" data-tab="marketing">Marketing</button>
+          <button class="tab" data-tab="pitch">Pitch</button>
+        </div>
+
+        <div class="tab-panels">
+          <div class="tab-panel active" id="tab-overview"></div>
+          <div class="tab-panel" id="tab-product"></div>
+          <div class="tab-panel" id="tab-tech"></div>
+          <div class="tab-panel" id="tab-marketing"></div>
+          <div class="tab-panel" id="tab-pitch"></div>
+        </div>
+
+        <button id="copyAllBtn" 
+        style="margin-bottom:10px; padding:8px 14px; 
+               background:#4cc9f0; color:#000; border:none; 
+               border-radius:10px; cursor:pointer; font-weight:600;">
+  Copy All Output
+</button>
+
+      </section>
+    </section>
+  </main>
+
+  <footer class="global-footer">
+    <p>© 2025 GenStart — AI Multi-Agent Startup Builder</p>
+    <p style="opacity:0.7;">Created for Gen AI-thon • ML Nashik</p>
+  </footer>
+
+  <script>
+  const API_BASE = "http://localhost:8000";
+
+  const ideaInput  = document.getElementById("ideaInput");
+  const modeSelect = document.getElementById("modeSelect");
+  const generateBtn= document.getElementById("generateBtn");
+  const statusEl   = document.getElementById("status");
+  const agentDots  = document.querySelectorAll(".agent");
+
+  const tabs = document.querySelectorAll(".tab");
+  const panels = {
+    overview: document.getElementById("tab-overview"),
+    product:  document.getElementById("tab-product"),
+    tech:     document.getElementById("tab-tech"),
+    marketing:document.getElementById("tab-marketing"),
+    pitch:    document.getElementById("tab-pitch"),
+  };
+
+  function setActiveTab(name){
+    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+    Object.entries(panels).forEach(([k,v]) => v.classList.toggle("active", k===name));
+  }
+  tabs.forEach(tab => tab.addEventListener("click", () => setActiveTab(tab.dataset.tab)));
+
+  function resetAgents(){ agentDots.forEach(el => el.classList.remove("active")); }
+  function setAgentActive(name){
+    agentDots.forEach(el => el.classList.toggle("active", el.dataset.agent === name));
+  }
+
+  // ---------- RENDER HELPERS ----------
+
+  function ensureObject(maybeJson) {
+    // If backend somehow returned a string, try to parse
+    if (typeof maybeJson === "string") {
+      try { return JSON.parse(maybeJson); } catch { return { raw: maybeJson }; }
+    }
+    return maybeJson || {};
+  }
+
+ function renderFallback(panel, obj, titleIfRaw) {
+  // Model didn't follow JSON format – just show whatever it sent.
+  if (obj && obj.raw !== undefined) {
+    let html = "";
+    if (titleIfRaw) {
+      html += `<div class="section-title">${titleIfRaw}</div>`;
+    }
+    const rawText = obj.raw || "(No structured data, showing raw response.)";
+    html += `<pre style="white-space:pre-wrap;">${rawText}</pre>`;
+    // NOTE: we intentionally DO NOT show obj.parse_error in the UI
+    panel.innerHTML = html;
+    return true;
+  }
+  return false;
+}
+
+
+  function renderOverview(ceo){
+    ceo = ensureObject(ceo);
+    // If error or raw, show it
+    if (ceo.error) {
+      panels.overview.innerHTML = `<p style="color:#fca5a5;">${ceo.error}</p>`;
+      return;
+    }
+    if (renderFallback(panels.overview, ceo, "CEO Overview (raw)")) return;
+
+    let html = "";
+    const add = (label, value) => {
+      if(!value) return;
+      html += `<div class="section-title">${label}</div><p>${value}</p>`;
+    };
+    add("Problem", ceo.problem);
+    add("Target Users", ceo.target_users);
+    add("Value Proposition", ceo.value_proposition);
+    add("Market Opportunity", ceo.market_opportunity);
+    add("Business Model", ceo.business_model);
+    add("Revenue Streams", ceo.revenue_streams);
+
+    if (!html) {
+      // as last resort, dump full JSON
+      panels.overview.innerHTML =
+        `<pre style="white-space:pre-wrap;">${JSON.stringify(ceo, null, 2)}</pre>`;
+    } else {
+      panels.overview.innerHTML = html;
+    }
+  }
+
+  function renderList(label, items){
+    if(!items || !items.length) return "";
+    const lis = items.map(x => `<li>${x}</li>`).join("");
+    return `<div class="section-title">${label}</div><ul class="bullet-list">${lis}</ul>`;
+  }
+
+  function renderProduct(product){
+    product = ensureObject(product);
+    if (renderFallback(panels.product, product, "Product Spec (raw)")) return;
+
+    let html = "";
+    html += renderList("Core Features", product.core_features);
+    html += renderList("User Personas", product.user_personas);
+    if(product.user_flow) html += `<div class="section-title">User Flow</div><p>${product.user_flow}</p>`;
+    if(product.mvp_scope) html += `<div class="section-title">MVP Scope</div><p>${product.mvp_scope}</p>`;
+    if(product.future_roadmap) html += `<div class="section-title">Future Roadmap</div><p>${product.future_roadmap}</p>`;
+
+    if (!html) {
+      panels.product.innerHTML =
+        `<pre style="white-space:pre-wrap;">${JSON.stringify(product, null, 2)}</pre>`;
+    } else {
+      panels.product.innerHTML = html;
+    }
+  }
+
+  function renderDev(dev){
+    dev = ensureObject(dev);
+    if (renderFallback(panels.tech, dev, "Technical Plan (raw)")) return;
+
+    let html = "";
+    html += renderList("Tech Stack", dev.tech_stack);
+    if(dev.architecture) html += `<div class="section-title">Architecture</div><p>${dev.architecture}</p>`;
+    html += renderList("API Endpoints", dev.api_endpoints);
+    if(dev.db_schema) html += `<div class="section-title">DB Schema</div><p>${dev.db_schema}</p>`;
+    if(dev.sample_code_snippets && dev.sample_code_snippets.length){
+      html += `<div class="section-title">Sample Code</div>`;
+      dev.sample_code_snippets.forEach(sn => {
+        html += `<pre style="background:#050816; padding:8px; border-radius:8px; overflow:auto;">${sn}</pre>`;
+      });
+    }
+
+    if (!html) {
+      panels.tech.innerHTML =
+        `<pre style="white-space:pre-wrap;">${JSON.stringify(dev, null, 2)}</pre>`;
+    } else {
+      panels.tech.innerHTML = html;
+    }
+  }
+
+  function renderMarketing(m){
+    m = ensureObject(m);
+    if (renderFallback(panels.marketing, m, "Marketing Plan (raw)")) return;
+
+    let html = "";
+    if(m.brand_name) html += `<div class="section-title">Brand Name</div><p>${m.brand_name}</p>`;
+    if(m.tagline) html += `<div class="section-title">Tagline</div><p>${m.tagline}</p>`;
+    if(m.positioning) html += `<div class="section-title">Positioning</div><p>${m.positioning}</p>`;
+    html += renderList("Target Channels", m.target_channels);
+    if(m.launch_strategy) html += `<div class="section-title">Launch Strategy</div><p>${m.launch_strategy}</p>`;
+    html += renderList("Content Ideas", m.content_ideas);
+
+    if (!html) {
+      panels.marketing.innerHTML =
+        `<pre style="white-space:pre-wrap;">${JSON.stringify(m, null, 2)}</pre>`;
+    } else {
+      panels.marketing.innerHTML = html;
+    }
+  }
+
+  function renderPitch(summary){
+    summary = ensureObject(summary);
+    if (renderFallback(panels.pitch, summary, "Pitch (raw)")) return;
+
+    let html = "";
+    if(summary.elevator_pitch) html += `<div class="section-title">Elevator Pitch</div><p>${summary.elevator_pitch}</p>`;
+    const slide = (num) => {
+      const title = summary[`slide_${num}_title`];
+      const points = summary[`slide_${num}_points`];
+      if(!title && !points) return "";
+      let s = `<div class="section-title">Slide ${num}: ${title || ""}</div>`;
+      if(points && points.length){
+        s += `<ul class="bullet-list">${points.map(p=>`<li>${p}</li>`).join("")}</ul>`;
+      }
+      return s;
+    };
+    html += slide(1);
+    html += slide(2);
+    html += slide(3);
+
+    if (!html) {
+      panels.pitch.innerHTML =
+        `<pre style="white-space:pre-wrap;">${JSON.stringify(summary, null, 2)}</pre>`;
+    } else {
+      panels.pitch.innerHTML = html;
+    }
+  }
+
+  // ---------- MAIN CALL ----------
+
+  async function generatePlan(){
+    const ideaRaw = ideaInput.value.trim();
+    if(!ideaRaw){
+      alert("Please type your startup idea first.");
+      return;
+    }
+
+    let idea = ideaRaw;
+    const mode = modeSelect.value;
+    if(mode === "student"){
+      idea += " (This idea is mainly for students / campus startup.)";
+    } else if(mode === "local"){
+      idea += " (This idea should work for a local Indian city and later scale.)";
+    }
+
+    resetAgents();
+    setAgentActive("CEO");
+    statusEl.textContent = "Generating plan with multiple AI agents...";
+    generateBtn.disabled = true;
+
+    try{
+      const res = await fetch(`${API_BASE}/generate-plan`, {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify({ idea })
+      });
+      if(!res.ok){
+        throw new Error("Backend error. Is FastAPI running on port 8000?");
+      }
+
+      // animate agent progression
+      setTimeout(()=>setAgentActive("Product"), 400);
+      setTimeout(()=>setAgentActive("Dev"), 800);
+      setTimeout(()=>setAgentActive("Marketing"), 1200);
+      setTimeout(()=>setAgentActive("Pitch"), 1600);
+
+      const data = await res.json();
+      console.log("GenStart API response:", data);   // <--- DEBUG: see real structure
+
+      renderOverview(data.ceo);
+      renderProduct(data.product);
+      renderDev(data.dev);
+      renderMarketing(data.marketing);
+      renderPitch(data.summary);
+
+      setActiveTab("overview");
+      statusEl.textContent = "Plan generated! Explore each tab for full details.";
+    } catch(err){
+      console.error(err);
+      statusEl.textContent = "Error: " + err.message;
+    } finally{
+      generateBtn.disabled = false;
+    }
+  }
+
+  generateBtn.addEventListener("click", generatePlan);
+
+  // Theme toggle – optional
+  document.getElementById("themeToggle").onclick = () => {
+    if(document.body.classList.contains("light")){
+      document.body.classList.remove("light");
+      document.body.classList.add("neon");
+    } else if(document.body.classList.contains("neon")){
+      document.body.classList.remove("neon");
+    } else {
+      document.body.classList.add("light");
+    }
+  };
+  document.getElementById("copyAllBtn").addEventListener("click", () => {
+  // Collect content from all tabs
+  const output = `
+=== OVERVIEW ===
+${document.getElementById("tab-overview").innerText.trim()}
+
+=== PRODUCT ===
+${document.getElementById("tab-product").innerText.trim()}
+
+=== TECH ===
+${document.getElementById("tab-tech").innerText.trim()}
+
+=== MARKETING ===
+${document.getElementById("tab-marketing").innerText.trim()}
+
+=== PITCH ===
+${document.getElementById("tab-pitch").innerText.trim()}
+`;
+
+  // Copy to clipboard
+  navigator.clipboard.writeText(output)
+    .then(() => {
+      // Visual confirmation
+      const btn = document.getElementById("copyAllBtn");
+      const originalText = btn.innerText;
+      btn.innerText = "Copied!";
+      btn.style.background = "#00ff9d";
+      btn.style.color = "#000";
+
+      setTimeout(() => {
+        btn.innerText = originalText;
+        btn.style.background = "#4cc9f0";
+        btn.style.color = "#000";
+      }, 1500);
+    })
+    .catch(err => {
+      console.error("Copy failed:", err);
+      alert("Failed to copy the output. Check console.");
+    });
+});
+</script>
+</body>
+</html>
